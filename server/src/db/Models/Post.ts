@@ -17,4 +17,9 @@ export const Post = sequelize.define("post", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+
+  name: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
 });

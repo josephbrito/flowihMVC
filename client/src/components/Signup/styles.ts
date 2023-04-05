@@ -1,5 +1,10 @@
 import styled from "styled-components";
 
+interface IButton {
+  background: string;
+  color: string;
+}
+
 export const Container = styled.div`
   width: 30%;
   padding: 20px;
@@ -27,14 +32,18 @@ export const Input = styled.input`
   }
 `;
 
-export const Button = styled.button`
+export const Button = styled.button<IButton>`
   width: 100%;
-  background: #000;
-  color: #fff;
+  background: ${(props) => props.background};
+  color: ${(props) => props.color};
   border: none;
   height: 50px;
   padding: 8px;
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;

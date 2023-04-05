@@ -1,11 +1,11 @@
-import { createContext, useContext, useState } from "react";
-import { IChildren, IUser, IUserData, USER_DEFAULT_VALUE } from "./types";
+import { createContext, useContext } from "react";
+import { IChildren, IUserData, USER_DEFAULT_VALUE } from "./types";
+import { useLocalstorage } from "../utils/useLocalstorage";
 
 export const UserContext = createContext<IUserData>(USER_DEFAULT_VALUE);
 
 export function UserProvider({ children }: IChildren) {
-  const [user, setUser] = useState<IUser>({} as IUser);
-
+  const [user, setUser] = useLocalstorage("user", USER_DEFAULT_VALUE.user);
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}

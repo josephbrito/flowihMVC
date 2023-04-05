@@ -3,6 +3,8 @@ import { User } from "../db/Models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { SECRET_TOKEN } from "../config/secret";
+import { Post } from "../db/Models/Post";
+
 export async function createUser(req: Request, res: Response) {
   const username: string = req.body.username;
   const password: string = req.body.password;
@@ -87,6 +89,10 @@ export async function updateUser(req: Request, res: Response) {
       username: newUsername,
       password: newPassword,
     });
+    await Post.update(
+      { name: newName },
+      { where: { userid: user.dataValues.id } }
+    );
 
     const newToken = await jwt.sign(
       {
@@ -99,7 +105,7 @@ export async function updateUser(req: Request, res: Response) {
       { expiresIn: 86400 }
     );
 
-    res.status(201).cookie("nkoe", newToken).send();
+    res.status(201).cookie("nkoe", newToken).send(user);
     return;
   } catch (error) {
     res.status(400).send("Error to update user");
@@ -116,7 +122,9 @@ export async function deleteUser(req: Request, res: Response) {
   }
 
   try {
+    await Post.destroy({ where: { userid: user.dataValues.id } });
     user!.destroy();
+
     res.status(200).send("user deleted!");
     return;
   } catch (error) {
@@ -163,6 +171,24 @@ export async function loginUser(req: Request, res: Response) {
       .redirect("/" + userExists.dataValues.id);
   } catch (error) {
     res.status(400).send("Error on login user");
+    return;
+  }
+}
+
+export async function allUsers(req: Request, res: Response) {
+  try {
+    const allusers = await User.findAll();
+    const users = allusers.map((e) => {
+      return {
+        id: e.dataValues.id,
+        name: e.dataValues.name,
+        username: e.dataValues.username,
+      };
+    });
+    res.status(200).send(users);
+    return;
+  } catch (error) {
+    res.status(400).send("Error to list all users");
     return;
   }
 }

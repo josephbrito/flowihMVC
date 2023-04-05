@@ -8,7 +8,12 @@ import { IUser } from "../../context/types";
 const Signin: React.FC = () => {
   let navigate = useNavigate();
 
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
+
+  if (Object.keys(user).length) {
+    navigate("/");
+    return <p></p>;
+  }
 
   const [username, setUserame] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -46,7 +51,9 @@ const Signin: React.FC = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <Button onClick={handleSubmit}>Submit</Button>
+      <Button background="#000" color="#fff" onClick={handleSubmit}>
+        Submit
+      </Button>
     </Container>
   );
 };

@@ -1,38 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { Container, Content, Input } from "./styles";
-import { IChildren, IPost } from "../../context/types";
-import { useUser } from "../../context/user";
+import { Container, Content, GreetingBox, Input, PostsBox } from "./styles";
+import { IPost } from "../../context/types";
 import { api } from "../../services";
-import { usePost } from "../../context/posts";
 import Post from "../Post";
-import { Link } from "react-router-dom";
+
+import { useUser } from "../../context/user";
+import { usePost } from "../../context/posts";
 
 import { MdAddCircle } from "react-icons/md";
 
 import Modal from "react-modal";
 import { Button } from "../Signup/styles";
+import NotLogged from "../NotLogged";
 
 Modal.setAppElement("#root");
-const Main: React.FC<IChildren> = () => {
-  const { user } = useUser();
+const Main: React.FC = () => {
   const { posts, setPosts } = usePost();
-
+  const { user } = useUser();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-
-  if (!Object.keys(user).length) {
-    return (
-      <Container>
-        <h1 className="title">
-          Welcome! <Link to={"/signup"}>Create an account</Link> or
-          <Link to={"/signIN"}> sign in</Link> for post your day to day
-        </h1>
-      </Container>
-    );
-  }
 
   const handleClick = async () => {
     if (!title || !description) {
@@ -41,32 +29,52 @@ const Main: React.FC<IChildren> = () => {
     }
 
     try {
-      const req = await api.post(`${user.id}/post`, { title, description });
+      const req = await api.post(`posts/${user.id}/post`, {
+        title,
+        description,
+      });
       const data: IPost = req.data;
       setPosts([...posts, data]);
       setIsOpen(false);
+      setTitle("");
+      setDescription("");
     } catch (error: any) {
       alert(error.response.data);
       return;
     }
   };
 
+  if (!Object.keys(user).length) {
+    return <NotLogged />;
+  }
+
   return (
     <Container>
-      <h1>Hello {user.name}</h1>
+      <GreetingBox>
+        <h1>Welcome Back {user.name}</h1>
+      </GreetingBox>
       {!posts.length ? (
         <div className="addpost">
           <h3>You don't have posts yet.</h3>
+          <MdAddCircle onClick={() => setIsOpen(true)} />
         </div>
       ) : (
         <div>
-          {posts.map((post) => (
-            <Post
-              key={post.id}
-              title={post.title}
-              description={post.description}
-            />
-          ))}
+          <div className="addpost">
+            <MdAddCircle onClick={() => setIsOpen(true)} />
+          </div>
+          <PostsBox>
+            {posts.map((post) => (
+              <Post
+                key={post.id}
+                id={post.id}
+                title={post.title}
+                description={post.description}
+                name={user.name}
+                edit
+              />
+            ))}
+          </PostsBox>
         </div>
       )}
       <Modal
@@ -96,7 +104,9 @@ const Main: React.FC<IChildren> = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-          <Button onClick={handleClick}>SUBMIT</Button>
+          <Button background="#000" color="#fff" onClick={handleClick}>
+            SUBMIT
+          </Button>
         </Content>
       </Modal>
     </Container>

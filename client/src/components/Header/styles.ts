@@ -38,3 +38,15 @@ export const NavBar = styled.nav`
     }
   }
 `;
+
+export const UserBox = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #fff;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;

@@ -16,6 +16,7 @@ export async function createPost(req: Request, res: Response) {
     const post = await Post.create({
       title: title,
       description: description,
+      name: user.dataValues.name,
       userid: user.dataValues.id,
     });
 
@@ -66,6 +67,9 @@ export async function updatePost(req: Request, res: Response) {
   });
 
   if (!post) {
+    res.status(404).send("Post not found");
+    return;
+  } else if (post.dataValues.userid != user.dataValues.id) {
     res.status(404).send("Post not found");
     return;
   }

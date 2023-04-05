@@ -19,14 +19,7 @@ function App() {
           <GlobalStyle />
           <Header />
           <Routes>
-            <Route
-              path="/"
-              element={
-                <Main>
-                  <h1>Hello friend</h1>
-                </Main>
-              }
-            />
+            <Route path="/" element={<Main />} />
             <Route
               path="/signup"
               element={

@@ -3,9 +3,17 @@ import React, { useState } from "react";
 import { Button, Container, Input } from "./styles";
 import { api } from "../../services";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../context/user";
 
 const Signup: React.FC = () => {
   let navigate = useNavigate();
+
+  const { user } = useUser();
+
+  if (Object.keys(user).length) {
+    navigate("/");
+    return <p></p>;
+  }
 
   const [name, setName] = useState<string>("");
   const [username, setUserame] = useState<string>("");
@@ -48,7 +56,9 @@ const Signup: React.FC = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <Button onClick={handleSubmit}>Submit</Button>
+      <Button background="#000" color="#fff" onClick={handleSubmit}>
+        Submit
+      </Button>
     </Container>
   );
 };
